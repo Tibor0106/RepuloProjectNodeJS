@@ -7,8 +7,10 @@ let db = new sqlite.Database("db/main.db", (err) => {
         return console.log(err.message);
     console.log("Connected to webserver database!");
 });
+app.use(express.static('public'));
 app.get('/', (req, res) => {
-    res.send('Hello World!')
+    res.render("../public/index.html", {
+    });
 })
 
 app.listen(port, () => {
