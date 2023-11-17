@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdminPanel</title>
+    <link rel="stylesheet" href="view/css/style.css">
+    <script src="view/js/adminpanel.js"></script>
+</head>
+<body onload="setAdminKey()">
+    <input type="password" name="adminKey" id="adminKey" placeholder="admin key">
+    <button onclick="saveKey();">Save Admin Key</button>
+    <p><b>DISCLAIMER: Saving your admin key uses cookies, you must enable cookies for saving to work!</b></p>
+    <div class="form">
+        <h1>Publish a flight</h1>
+        <select name="Origin" id="flightOrigin" required>
+            <option value="" disabled selected hidden >Origin..</option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
+            <% } %>
+        </select>
+        <select name="Destination" id="flightDestination" required>
+            <option value="" disabled selected hidden >Destination..</option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
+            <% } %>
+        </select>
+        <input type="time" name="departureTime" id="departureTime">
+        <input type="time" name="arrivalTime" id="arrivalTime">
+        <button onclick="publishFlight();">Publish</button>
+    </div>    
+    <div class="form">
+        <h1>Add a destination to the Database</h1>
+        <input type="text" name="destinationName" id="destinationName" placeholder="Destination Name">
+        <button onclick="addDestination();">Add</button>
+    </div>    
+    <div class="form">
+        <h1>Remove a flight</h1>
+        <select name="flightToRemove" id="flightToRemove" required>
+            <option value="" disabled selected hidden >flightId..</option>
+            <% for(var i = 0; i < v_flights.length; i++) {%>
+                <option value="<%=v_flights[i]['flightId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_flights[i]['originId']));%> -> <%=f_getDestinationName(parseInt(v_flights[i]['destinationId']));%></option>
+            <% } %>
+        </select>
+        <button onclick="removeFlight();">Remove</button>
+    </div>    
+    <div class="form">
+        <h1>Remove a destination from the Database(WILL REMOVE EVERY FLIGHT CONTAINING THIS DESTINATION!)</h1>
+        <select name="destinationToRemove" id="destinationToRemove" required>
+            <option value="" disabled selected hidden >destinationId..</option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_destinations[i]['destinationId']));%></option>
+            <% } %>
+        </select>
+        <button onclick="removeDestination();">Remove</button>
+    </div>    
+    <div class="form">
+        <h1>Update a flight</h1>
+        <select name="flightToUpdate" id="flightToUpdate" required onchange="loadFlightData();">
+            <option value="" disabled selected hidden >flightId..</option>
+            <% for(var i = 0; i < v_flights.length; i++) {%>
+                <option value="<%=v_flights[i]['flightId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_flights[i]['originId']));%> -> <%=f_getDestinationName(parseInt(v_flights[i]['destinationId']));%></option>
+            <% } %>
+        </select>
+            
+        <select name="Origin" id="flightEditOrigin" required>
+            <option value="" selected hidden ></option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
+            <% } %>
+        </select><select name="Destination" id="flightEditDestination" required>
+            <option value="" selected hidden ></option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
+            <% } %>
+        </select>
+        <input type="time" name="departureTime" id="departureEditTime">
+        <input type="time" name="arrivalTime" id="arrivalEditTime">
+        <button onclick="editFlight();">Update</button>
+    </div>    
+
+    <script>
+        function loadFlightData() {
+            var jsonified = '<%- JSON.stringify(v_flights) %>';
+            jsonified = JSON.parse(jsonified);
+            var fId = document.getElementById('flightToUpdate').value;
+            for(var k = 0; k < jsonified.length; k++){
+                if (jsonified[k]['flightId'] == parseInt(fId))
+                {
+                    var originList = document.getElementById('flightEditOrigin').children;
+                    for(var j = 0; j < originList.length; j++)
+                        if (parseInt(originList[j].value) == parseInt(jsonified[k]['originId']))
+                            document.getElementById('flightEditOrigin').options[j].selected = true;
+                    var destinationList = document.getElementById('flightEditDestination').children;
+                    for(var j = 0; j < destinationList.length; j++)
+                        if (parseInt(destinationList[j].value) == parseInt(jsonified[k]['destinationId']))
+                            document.getElementById('flightEditDestination').options[j].selected = true;
+                    document.getElementById('departureEditTime').value = jsonified[k]['departureTime'];
+                    document.getElementById('arrivalEditTime').value = jsonified[k]['arrivalTime'];
+                }
+            }
+        }
+    </script>
+</body>
+</html>

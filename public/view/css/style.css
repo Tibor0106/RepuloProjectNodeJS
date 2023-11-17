@@ -1,0 +1,6 @@
+#flightOrigin:invalid, #flightDestination:invalid, #flightToRemove:invalid, #destinationToRemove:invalid {
+    color:gray;
+}
+#flightOrigin:valid, #flightDestination:valid, #flightToRemove:valid, #destinationToRemove:valid {
+    color:black;
+}
