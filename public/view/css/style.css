@@ -4,3 +4,75 @@
 #flightOrigin:valid, #flightDestination:valid, #flightToRemove:valid, #destinationToRemove:valid {
     color:black;
 }
+
+.adminkeypanel {
+    background: #eeeeee;
+    display: flex;
+    flex-flow: column;
+    text-align: center;
+}
+.adminkeypanel button{
+    border:none;
+    background-color: #dbdbdb;
+    border-radius: 50px;
+    height:5vh;
+}
+.adminkeypanel button:hover{
+    background-color: #cecece;
+    cursor:pointer;
+    box-shadow: 2px 2px rgb(125, 125, 125);
+}
+.adminkeypanel p {
+    margin-top:-.3vh;
+}
+.form {
+    width:98vw;
+    display:flex;
+    flex-flow:column;
+    align-items: center;
+    text-align: center;
+}
+.form input, .form select {
+    width:25%;
+    border-radius: 500px;
+    border:none;
+    background-color: #eaeaea;
+    margin:5px;
+    box-shadow:2px 2px rgb(125, 125, 125, 0.5);
+}
+.form select {
+    height:4vh;
+}
+.form input[type=time] {
+    width:6%;
+}
+
+.form button {
+    border:none;
+    border-radius:500px;
+    width:15vw;
+    height:4vh;
+    font-size:1.3vw;
+}
+.form button:hover {
+    background-color: #dadada;
+    box-shadow: 2px 2px #c7c7c7;
+}
+.form button:active {
+    background-color: #c7c7c7;
+    box-shadow: 2px 2px #bababa;
+}
+h1.texts, p {
+    text-shadow: 2px 2px rgb(200, 200, 200, 0.5);
+}
+h2, h3, h4, h5, h6, input, button, option, select, h1, p {
+    font-family:monospace
+}
+.form {
+    padding-bottom:2vh;
+    border-bottom: 2px solid rgb(122, 122, 122, 0.25);
+}
+
+option {
+    color:black;
+}

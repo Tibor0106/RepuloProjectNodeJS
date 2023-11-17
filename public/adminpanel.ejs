@@ -7,12 +7,13 @@
     <link rel="stylesheet" href="view/css/style.css">
     <script src="view/js/adminpanel.js"></script>
 </head>
-<body onload="setAdminKey()">
-    <input type="password" name="adminKey" id="adminKey" placeholder="admin key">
+<body onload="setAdminKey()"><div class="adminkeypanel"><div class="seperate">
+    <input type="password" name="adminKey" id="adminKey" placeholder="admin key"></div>
+    <div class="seperate">
     <button onclick="saveKey();">Save Admin Key</button>
-    <p><b>DISCLAIMER: Saving your admin key uses cookies, you must enable cookies for saving to work!</b></p>
+    <p><b>DISCLAIMER: Saving your admin key uses cookies, you must enable cookies for saving to work!</b></p></div></div>
     <div class="form">
-        <h1>Publish a flight</h1>
+        <h1 class="texts">Publish a flight</h1>
         <select name="Origin" id="flightOrigin" required>
             <option value="" disabled selected hidden >Origin..</option>
             <% for(var i = 0; i < v_destinations.length; i++) {%>
@@ -30,12 +31,12 @@
         <button onclick="publishFlight();">Publish</button>
     </div>    
     <div class="form">
-        <h1>Add a destination to the Database</h1>
+        <h1 class="texts">Add a destination to the Database</h1>
         <input type="text" name="destinationName" id="destinationName" placeholder="Destination Name">
         <button onclick="addDestination();">Add</button>
     </div>    
     <div class="form">
-        <h1>Remove a flight</h1>
+        <h1 class="texts">Remove a flight</h1>
         <select name="flightToRemove" id="flightToRemove" required>
             <option value="" disabled selected hidden >flightId..</option>
             <% for(var i = 0; i < v_flights.length; i++) {%>
@@ -45,7 +46,7 @@
         <button onclick="removeFlight();">Remove</button>
     </div>    
     <div class="form">
-        <h1>Remove a destination from the Database(WILL REMOVE EVERY FLIGHT CONTAINING THIS DESTINATION!)</h1>
+        <h1 class="texts">Remove a destination from the Database(WILL REMOVE EVERY FLIGHT CONTAINING THIS DESTINATION!)</h1>
         <select name="destinationToRemove" id="destinationToRemove" required>
             <option value="" disabled selected hidden >destinationId..</option>
             <% for(var i = 0; i < v_destinations.length; i++) {%>
@@ -53,9 +54,9 @@
             <% } %>
         </select>
         <button onclick="removeDestination();">Remove</button>
-    </div>    
+    </div>   
     <div class="form">
-        <h1>Update a flight</h1>
+        <h1 class="texts">Update a flight</h1>
         <select name="flightToUpdate" id="flightToUpdate" required onchange="loadFlightData();">
             <option value="" disabled selected hidden >flightId..</option>
             <% for(var i = 0; i < v_flights.length; i++) {%>
