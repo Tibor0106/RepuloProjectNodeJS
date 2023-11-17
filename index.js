@@ -1,6 +1,8 @@
 const express = require('express')
 const app = express()
 const sqlite = require("sqlite3").verbose();
+const cors = require('cors');
+app.use(cors());
 const port = 3500
 const adminkey = "admin";
 let destinations;
