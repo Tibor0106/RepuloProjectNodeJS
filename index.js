@@ -11,18 +11,18 @@ let db = new sqlite.Database("db/main.db", (err) => {
     console.log("Connected to webserver database!");
 });
 function updateDestinations() {
-    db.all("SELECT * FROM destinations;", function (err,rows) {
+    db.all("SELECT * FROM destinations;", function (err, rows) {
         if (err)
             return console.error(err);
         destinations = rows;
-    }); 
+    });
 }
 function updateFlights() {
-    db.all("SELECT * FROM flights;", function (err,rows) {
+    db.all("SELECT * FROM flights;", function (err, rows) {
         if (err)
             return console.error(err);
         flights = rows;
-    }); 
+    });
 }
 updateDestinations();
 updateFlights();
@@ -32,9 +32,9 @@ app.get('/', (req, res) => {
     });
 })
 function getDestinationName(id) {
-    for(var k = 0; k < destinations.length; k++){
+    for (var k = 0; k < destinations.length; k++) {
         if (destinations[k]['destinationId'] == parseInt(id))
-        return destinations[k]['destinationName'];
+            return destinations[k]['destinationName'];
     }
 }
 app.get('/adminpanel', (req, res) => {
@@ -46,7 +46,7 @@ app.get('/adminpanel', (req, res) => {
 })
 
 app.get('/addflight/:originId/:destinationId/:departure/:arrival/:adminkey', (req, res) => {
-    if(req.params.adminkey != adminkey)
+    if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
     db.run("INSERT INTO flights(originId, destinationId, departureTime, arrivalTime) VALUES(?,?,?,?)", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival], (err) => {
         if (err)
@@ -56,7 +56,7 @@ app.get('/addflight/:originId/:destinationId/:departure/:arrival/:adminkey', (re
     return res.redirect("/adminpanel")
 });
 app.get('/efl/:originId/:destinationId/:departure/:arrival/:flightId/:adminkey', (req, res) => {
-    if(req.params.adminkey != adminkey)
+    if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
     db.run("UPDATE flights SET originId = ?, destinationId = ?, departureTime = ?, arrivalTime = ? WHERE flightId = ?", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival, req.params.flightId], (err) => {
         if (err)
@@ -66,8 +66,8 @@ app.get('/efl/:originId/:destinationId/:departure/:arrival/:flightId/:adminkey',
     return res.redirect("/adminpanel")
 });
 app.get('/addest/:destinationName/:adminkey', (req, res) => {
-    if(req.params.adminkey != adminkey)
-    return res.end("wrong admin key!");
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
     db.run("INSERT INTO destinations(destinationName) VALUES(?)", [req.params.destinationName], (err) => {
         if (err)
             return console.error(err);
@@ -77,17 +77,17 @@ app.get('/addest/:destinationName/:adminkey', (req, res) => {
 
 });
 app.get('/removeflight/:flightId/:adminkey', (req, res) => {
-    if(req.params.adminkey != adminkey)
+    if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-        db.run("DELETE FROM flights WHERE flightId=?", [req.params.flightId], (err) => {
-            if (err)
-                return console.error(err);
-        });
-        updateFlights();
-        return res.redirect("/adminpanel")
+    db.run("DELETE FROM flights WHERE flightId=?", [req.params.flightId], (err) => {
+        if (err)
+            return console.error(err);
+    });
+    updateFlights();
+    return res.redirect("/adminpanel")
 });
 app.get('/removedestination/:destinationId/:adminkey', (req, res) => {
-    if(req.params.adminkey != adminkey)
+    if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
     db.run("DELETE FROM destinations WHERE destinationId=?", [req.params.destinationId], (err) => {
         if (err)
@@ -100,6 +100,16 @@ app.get('/removedestination/:destinationId/:adminkey', (req, res) => {
     updateDestinations();
     updateFlights();
     return res.redirect("/adminpanel")
+});
+app.get('/destinations/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.all("SELECT * FROM destinations", function (err, rows) {
+        if (err) {
+            return console.error(err.message);
+        }
+        res.json(rows);
+    });
 });
 
 app.listen(port, () => {
