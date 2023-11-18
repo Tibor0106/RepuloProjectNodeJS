@@ -1,4 +1,4 @@
-CREATE TABLE flights(flightId INTEGER PRIMARY KEY AUTOINCREMENT, originId INTEGER NOT NULL, destinationId INTEGER NOT NULL, departureTime TIME NOT NULL, arrivalTime TIME NOT NULL);
+CREATE TABLE flights(flightId INTEGER PRIMARY KEY AUTOINCREMENT, originId INTEGER NOT NULL, destinationId INTEGER NOT NULL, departureTime TIME NOT NULL, arrivalTime TIME NOT NULL, price INTEGER NOT NULL);
 CREATE TABLE destinations(destinationId INTEGER PRIMARY KEY AUTOINCREMENT, destinationName TEXT NOT NULL);
 
 -- Add a flight:
