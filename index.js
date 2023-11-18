@@ -103,16 +103,22 @@ app.get('/removedestination/:destinationId/:adminkey', (req, res) => {
     updateFlights();
     return res.redirect("/adminpanel")
 });
-app.get('/destinations/:adminkey', (req, res) => {
-    if (req.params.adminkey != adminkey)
-        return res.end("wrong admin key!");
+app.get('/destinations', (req, res) => {
     res.json(destinations);
 
 });
-app.get('/searchflight/:originid/:destentaionid/:adminkey', (req, res) => {
-    if (req.params.adminkey != adminkey)
-        return res.end("wrong admin key!");
-    db.all(`SELECT * FROM flights WHERE originId like ${req.params.originid} and destinationId like ${req.params.destentaionid}`, function (err, rows) {
+
+app.get('/getrelevantdestinations/:fromid', (req, res) => {
+    db.all(`SELECT * FROM destinations WHERE destinationId IN (SELECT destinationId FROM flights WHERE originId LIKE ?);`, [req.params.fromid], function (err, rows) {
+        if (err) {
+            return console.error(err.message);
+        }
+        res.json(rows);
+    });
+})
+app.get('/searchflight/:originid/:destinationid', (req, res) => {
+    req.params.destinationid = req.params.destinationid === "-1" ? "" : `and destinationId like ${req.params.destinationid}`;
+    db.all(`SELECT * FROM flights WHERE originId like ${req.params.originid} ${req.params.destinationid}`, function (err, rows) {
         if (err) {
             return console.error(err.message);
         }
