@@ -106,7 +106,13 @@ app.get('/removedestination/:destinationId/:adminkey', (req, res) => {
 app.get('/destinations/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    db.all("SELECT * FROM destinations", function (err, rows) {
+    res.json(destinations);
+
+});
+app.get('/searchflight/:originid/:destentaionid/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.all(`SELECT * FROM flights WHERE originId like ${req.params.originid} and destinationId like ${req.params.destentaionid}`, function (err, rows) {
         if (err) {
             return console.error(err.message);
         }
