@@ -4,8 +4,8 @@ function publishFlight() {
     var destinationId = document.getElementById('flightDestination');
     var departure = document.getElementById('departureTime');
     var arrival = document.getElementById('arrivalTime');
-    console.log(`adminkey:${adminkey.value}\noriginId:${originId.value}\ndestinationId:${destinationId.value}\ndeparture:${departure.value}\narrival:${arrival.value}`)
-    window.location = `http://eurojet.ddns.net:3500/addflight/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${adminkey.value}`;
+    var price = document.getElementById('flightPrice');
+    window.location = `http://eurojet.ddns.net:3500/addflight/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${adminkey.value}`;
 }
 function editFlight() {
     var adminkey = document.getElementById('adminKey');
@@ -14,8 +14,8 @@ function editFlight() {
     var departure = document.getElementById('departureEditTime');
     var arrival = document.getElementById('arrivalEditTime');
     var fId = document.getElementById('flightToUpdate');
-    console.log(`adminkey:${adminkey.value}\noriginId:${originId.value}\ndestinationId:${destinationId.value}\ndeparture:${departure.value}\narrival:${arrival.value}`)
-    window.location = `http://eurojet.ddns.net:3500/efl/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${fId.value}/${adminkey.value}`;
+    var price = document.getElementById('flightEditPrice');
+    window.location = `http://eurojet.ddns.net:3500/efl/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${fId.value}/${adminkey.value}`;
 }
 
 function addDestination() {

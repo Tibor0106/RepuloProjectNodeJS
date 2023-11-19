@@ -32,7 +32,7 @@
     align-items: center;
     text-align: center;
 }
-.form input, .form select {
+.form input[type=text], .form input[type=time], .form select {
     width:25%;
     border-radius: 500px;
     border:none;
@@ -45,6 +45,30 @@
 }
 .form input[type=time] {
     width:6%;
+}
+.form input[type=number] {
+    height:4vh;
+    width:23vw;
+    outline:none;
+}
+.priceDiv {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+}
+.priceDiv input {
+    font-family: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    text-align: right;
+    flex: 1;
+    min-width: 0;
+  
+    border: none;
+    background: none;
+  }
+.priceDiv::after {
+    content: "Ft";
 }
 
 .form button {

@@ -47,20 +47,20 @@ app.get('/adminpanel', (req, res) => {
     });
 })
 
-app.get('/addflight/:originId/:destinationId/:departure/:arrival/:adminkey', (req, res) => {
+app.get('/addflight/:originId/:destinationId/:departure/:arrival/:price/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    db.run("INSERT INTO flights(originId, destinationId, departureTime, arrivalTime) VALUES(?,?,?,?)", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival], (err) => {
+    db.run("INSERT INTO flights(originId, destinationId, departureTime, arrivalTime, price) VALUES(?,?,?,?,?)", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival, req.params.price], (err) => {
         if (err)
             return console.error(err);
     });
     updateFlights();
     return res.redirect("/adminpanel")
 });
-app.get('/efl/:originId/:destinationId/:departure/:arrival/:flightId/:adminkey', (req, res) => {
+app.get('/efl/:originId/:destinationId/:departure/:arrival/:price/:flightId/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    db.run("UPDATE flights SET originId = ?, destinationId = ?, departureTime = ?, arrivalTime = ? WHERE flightId = ?", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival, req.params.flightId], (err) => {
+    db.run("UPDATE flights SET originId = ?, destinationId = ?, departureTime = ?, arrivalTime = ?, price = ? WHERE flightId = ?", [req.params.originId, req.params.destinationId, req.params.departure, req.params.arrival, req.params.price, req.params.flightId], (err) => {
         if (err)
             return console.error(err);
     });

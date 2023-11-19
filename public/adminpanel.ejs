@@ -26,6 +26,9 @@
                 <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
             <% } %>
         </select>
+        <div class="priceDiv">
+        <input type="number" name="flightPrice" id="flightPrice" placeholder="flightPrice" >
+    </div>
         <input type="time" name="departureTime" id="departureTime">
         <input type="time" name="arrivalTime" id="arrivalTime">
         <button onclick="publishFlight();">Publish</button>
@@ -75,6 +78,9 @@
                 <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=v_destinations[i]['destinationName']%></option>
             <% } %>
         </select>
+        <div class="priceDiv">
+        <input type="number" name="flightPrice" id="flightEditPrice" placeholder="flightPrice" >
+    </div>
         <input type="time" name="departureTime" id="departureEditTime">
         <input type="time" name="arrivalTime" id="arrivalEditTime">
         <button onclick="editFlight();">Update</button>
@@ -98,6 +104,7 @@
                             document.getElementById('flightEditDestination').options[j].selected = true;
                     document.getElementById('departureEditTime').value = jsonified[k]['departureTime'];
                     document.getElementById('arrivalEditTime').value = jsonified[k]['arrivalTime'];
+                    document.getElementById('flightEditPrice').value = jsonified[k]['price'];
                 }
             }
         }
