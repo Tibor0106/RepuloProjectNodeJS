@@ -7,6 +7,11 @@ function publishFlight() {
     var price = document.getElementById('flightPrice');
     window.location = `http://eurojet.ddns.net:3500/addflight/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${adminkey.value}`;
 }
+function removeFlight() {
+    var adminkey = document.getElementById('adminKey');
+    var flightId = document.getElementById('flightToRemove'); 
+    window.location = `http://eurojet.ddns.net:3500/removeFlight/${flightId.value}/${adminkey.value}`;
+}
 function editFlight() {
     var adminkey = document.getElementById('adminKey');
     var originId = document.getElementById('flightEditOrigin'); 
