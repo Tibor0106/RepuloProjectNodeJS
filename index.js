@@ -126,6 +126,39 @@ app.get('/searchflight/:originid/:destinationid', (req, res) => {
     });
 });
 
+function activeMessage(email) {
+    db.all("SELECT COUNT(*) FROM messages WHERE email LIKE ?", (email), function (err, rows) {
+        if (rows[0].count != 0)
+            return false;
+    });
+    return true;
+}
+
+app.get('/addmessage/:email/:name/:address/:telnum/:message/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    if (activeMessage(req.params.email))
+        return res.end("already submitted a message with this email!");
+    db.run("INSERT INTO messages(email, userName, address, phonenum, userMessage) VALUES (?,?,?,?,?)", [req.params.email, req.params.name, req.params.address, req.params.telnum, req.params.message], (err) => {
+        if (err)
+        return console.error(err.message);
+    });
+});
+app.get('/removemessage/:messageid/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.run("DELETE FROM messages WHERE messageid = ?", [req.params.messageid], (err) => {
+        if (err)
+        return console.error(err.message);
+    });
+});
+app.get('/replymessage/:replyemployee/:replymessage/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+
+    //TODO: HANDLE EMAIL REPLY!
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`)
 })
