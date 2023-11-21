@@ -46,3 +46,8 @@ function setAdminKey() {
         document.getElementById('adminKey').value=document.cookie.split('=')[1];
 
 }
+
+function openTickets() {
+    var adminkey = document.getElementById('adminKey');
+    window.location = `http://eurojet.ddns.net:3500/gototickets/${adminkey.value}`;
+}

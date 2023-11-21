@@ -1,9 +1,9 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const sqlite = require("sqlite3").verbose();
 const cors = require('cors');
 app.use(cors());
-const port = 3500
+const port = 3500;
 const adminkey = "admin";
 let destinations;
 let flights;
@@ -15,14 +15,14 @@ let db = new sqlite.Database("db/main.db", (err) => {
 function updateDestinations() {
     db.all("SELECT * FROM destinations;", function (err, rows) {
         if (err)
-            return console.error(err);
+            return console.error(err.message);
         destinations = rows;
     });
 }
 function updateFlights() {
     db.all("SELECT * FROM flights;", function (err, rows) {
         if (err)
-            return console.error(err);
+            return console.error(err.message);
         flights = rows;
     });
 }
@@ -46,6 +46,21 @@ app.get('/adminpanel', (req, res) => {
         f_getDestinationName: getDestinationName
     });
 })
+
+function getTicketOfType(resolved) {
+    db.all("SELECT * FROM tickets WHERE resolved = ?", [resolved], (err, rows) => {
+        if (err)
+            return console.error(err.message);
+        console.log(`clicked: ${rows}`);
+        return rows;
+    })
+}
+
+app.get('/tickets', (req, res) => {
+    res.render("../public/tickets.ejs", {
+        f_getTicketsOfType: getTicketOfType
+    });
+});
 
 app.get('/addflight/:originId/:destinationId/:departure/:arrival/:price/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
@@ -113,7 +128,7 @@ app.get('/getrelevantdestinations/:fromid', (req, res) => {
         if (err) {
             return console.error(err.message);
         }
-        res.json(rows);
+        return res.json(rows);
     });
 })
 app.get('/searchflight/:originid/:destinationid', (req, res) => {
@@ -122,43 +137,107 @@ app.get('/searchflight/:originid/:destinationid', (req, res) => {
         if (err) {
             return console.error(err.message);
         }
-        res.json(rows);
+        return res.json(rows);
     });
 });
 
-function activeMessage(email) {
-    db.all("SELECT COUNT(*) FROM messages WHERE email LIKE ?", (email), function (err, rows) {
+function activeTicket(userid) {
+    db.all("SELECT COUNT(*) FROM tickets WHERE userid LIKE ?", [userid], function (err, rows) {
         if (rows[0].count != 0)
             return false;
     });
     return true;
 }
 
-app.get('/addmessage/:email/:name/:address/:telnum/:message/:adminkey', (req, res) => {
+app.get('/createticket/:userId/:ticketSubject/:ticketBody/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    if (activeMessage(req.params.email))
-        return res.end("already submitted a message with this email!");
-    db.run("INSERT INTO messages(email, userName, address, phonenum, userMessage) VALUES (?,?,?,?,?)", [req.params.email, req.params.name, req.params.address, req.params.telnum, req.params.message], (err) => {
+    if (activeTicket(req.params.userid))
+        return res.end("You already have an open ticket!");
+    db.run("INSERT INTO tickets(userId, ticketBody, ticketSubject, resolved) VALUES (?,?,?, ?)", [req.params.userId, req.params.ticketSubject, req.params.ticketBody, false], (err) => {
         if (err)
-        return console.error(err.message);
-    });
+            console.error(err.message);
+    })
 });
-app.get('/removemessage/:messageid/:adminkey', (req, res) => {
+app.get('/addticketmessage/:userId/:replyBody/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    db.run("DELETE FROM messages WHERE messageid = ?", [req.params.messageid], (err) => {
+    db.run("INSERT INTO ticketComments(userId, replyBody) VALUES (?, ?)", [req.params.userId, req.params.replyBody], (err) => {
         if (err)
-        return console.error(err.message);
-    });
+            console.error(err.message);
+    })
 });
-app.get('/replymessage/:replyemployee/:replymessage/:adminkey', (req, res) => {
+app.get('/closeticket/:ticketid/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
+    db.run("UPDATE tickets SET resolved=? WHERE ticketId=?", [true, req.params.ticketid], (err) => {
+        if (err)
+            console.error(err.message);
+    })
+});
+app.get('/getticketmessages/:ticketid/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.all("SELECT * FROM tickets WHERE ticketId = ?", [req.params.ticketid], (err, rows) => {
+        if (err)
+            console.error(err.message);
+        return res.json(rows);
+    })
+});
 
-    //TODO: HANDLE EMAIL REPLY!
-});
+
+const generateVerificationNumber = () => {
+    var minimum = 100000;
+    var maximum = 999999;
+    return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
+}
+
+app.get('/register/:email/:username/:password/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.run("INSERT INTO users(userName, email, userPassword, verified, verificationNumbers) VALUES(?,?,?,?,?)", [req.params.username, req.params.email, req.params.password, false, generateVerificationNumber()], (err) => {
+        if (err)
+            return console.error(err.message);
+    });
+})
+
+app.get('/login/:email/:password/', (req, res) => {
+    db.all("SELECT * FROM users WHERE email LIKE ?", [req.params.email], (err, rows) => {
+        if (err)
+            console.error(err.message);
+        return res.json(rows);
+    })
+})
+
+
+/*
+TODO: FIX 2 FUNCTIONS BELOW!
+
+const getVerificationNumbers = (userid) => {
+    db.all("SELECT verificationNumbers FROM users WHERE userid LIKE ?", [userid], (err, rows) => {
+        if (err)
+            return console.log(err.message);
+        return rows[0]["verificationNumbers"];
+    });
+}
+
+app.get('/verify/:userid/:verificationnumbers', (req, res) => {
+    var verificationums = getVerificationNumbers(req.params.userid);
+    console.log(`DB: ${verificationums} | INPUT: ${req.params.verificationnumbers}`);
+    if (verificationums != parseInt(req.params.verificationnumbers))
+        return console.error("Wrong verification code!");
+    db.run("UPDATE users SET verified=? WHERE userid LIKE ?", [true, req.params.userid], (err) => {
+        if (err)
+            console.error(err.message);
+    })
+})
+*/
+app.get('/gototickets/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    return res.redirect("/tickets");
+})
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`EuroJET running on port ${port}! | http://eurojet.ddns.net:${port}`)
 })
