@@ -2,6 +2,14 @@ const express = require('express');
 const app = express();
 const sqlite = require("sqlite3").verbose();
 const cors = require('cors');
+const nodemailer = require('nodemailer');
+const emailAccount = nodemailer.createTransport({
+    service:'Hotmail',
+    auth: {
+        user:'EuroJetPRJ@outlook.com',
+        pass:'EuroJet20231127'
+    }
+});
 app.use(cors());
 const port = 3500;
 const adminkey = "admin";
@@ -191,15 +199,65 @@ const generateVerificationNumber = () => {
     var maximum = 999999;
     return Math.floor(Math.random() * (maximum - minimum + 1)) + minimum;
 }
-
-app.get('/register/:email/:username/:password/:adminkey', (req, res) => {
-    if (req.params.adminkey != adminkey)
-        return res.end("wrong admin key!");
-    db.run("INSERT INTO users(userName, email, userPassword, verified, verificationNumbers) VALUES(?,?,?,?,?)", [req.params.username, req.params.email, req.params.password, false, generateVerificationNumber()], (err) => {
+const userExists = (email, username) => { // TODO: FIX <--- 
+    db.all("SELECT * FROM users WHERE email LIKE ?", [email], (err, rows) => {
+        if (err)
+            console.error(err.message);
+        console.log(rows.length > 0);
+        return (rows.length > 0);
+    })
+    db.all("SELECT * FROM users WHERE userName LIKE ?", [username], (err, rows) => {
+        if (err)
+            console.error(err.message);
+        console.log(rows.length > 0);
+        return (rows.length > 0);
+    })
+    return false;
+}
+var id = 0;
+function saveId(v_id, verNums, email) {
+    id = v_id;
+    var mailSettings = {
+        from: 'EuroJetPRJ@outlook.com',
+        to: email,
+        subject: "EuroJET Registration",
+        text: `Thank you for registering to EuroJET! To verify your account, follow this link to verify your account: http://eurojet.ddns.net:3500/verify/${v_id}/${verNums}`
+    }
+    emailAccount.sendMail(mailSettings, function(err, info) {
         if (err)
             return console.error(err.message);
-    });
+    })
+    return true;
+}
+function getUserId(email, verNums) {
+    db.all("SELECT * FROM users WHERE email LIKE ?", [email], (err, rows) => {
+        saveId(rows[0].userId, verNums, email);
+        console.log(id);
+    })
+    return id;
+}
+app.get('/register/:email/:username/:password/:adminkey', (req, res) => {
+    
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    console.log(userExists(req.params.email, req.params.username));
+    //if (userExists(req.params.email, req.params.username) == true)
+        //return res.json({"registered": false, "error": "exists"})         TODO: FIX <--- 
+    //else{
+        var verNums = generateVerificationNumber()
+        db.run("INSERT INTO users(userName, email, userPassword, verified, verificationNumbers) VALUES(?,?,?,?,?)", [req.params.username, req.params.email, req.params.password, false, verNums], (err) => {
+            if (err)
+                return console.error(err.message);
+        });
+        console.log("OK");
+        res.status(202);
+        var id = getUserId(req.params.email, verNums);
+        console.log(id);
+        return res.json({ "registered":true})
+    //}
 })
+
+
 
 app.get('/login/:email/:password/', (req, res) => {
     db.all("SELECT * FROM users WHERE email LIKE ?", [req.params.email], (err, rows) => {
@@ -210,28 +268,20 @@ app.get('/login/:email/:password/', (req, res) => {
 })
 
 
-/*
-TODO: FIX 2 FUNCTIONS BELOW!
-
-const getVerificationNumbers = (userid) => {
-    db.all("SELECT verificationNumbers FROM users WHERE userid LIKE ?", [userid], (err, rows) => {
-        if (err)
-            return console.log(err.message);
-        return rows[0]["verificationNumbers"];
-    });
-}
 
 app.get('/verify/:userid/:verificationnumbers', (req, res) => {
-    var verificationums = getVerificationNumbers(req.params.userid);
-    console.log(`DB: ${verificationums} | INPUT: ${req.params.verificationnumbers}`);
-    if (verificationums != parseInt(req.params.verificationnumbers))
-        return console.error("Wrong verification code!");
-    db.run("UPDATE users SET verified=? WHERE userid LIKE ?", [true, req.params.userid], (err) => {
+    db.all("SELECT verificationNumbers FROM users WHERE userId LIKE ? AND verificationNumbers LIKE ?", [req.params.userid, req.params.verificationnumbers], (err, rows) => {
         if (err)
-            console.error(err.message);
+        return console.error(err.message);
+    if (rows.length > 0)
+        db.run("UPDATE users SET verified=? WHERE userid LIKE ?", [true, req.params.userid], (err) => {
+            if (err)
+                return console.error(err.message);
+        })
     })
+    return res.json({"success": true});
 })
-*/
+
 app.get('/gototickets/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
