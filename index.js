@@ -215,8 +215,7 @@ const userExists = (email, username) => { // TODO: FIX <---
     return false;
 }
 var id = 0;
-function saveId(v_id, verNums, email) {
-    id = v_id;
+function sendEmail(v_id, verNums, email) {
     var mailSettings = {
         from: 'EuroJetPRJ@outlook.com',
         to: email,
@@ -231,7 +230,7 @@ function saveId(v_id, verNums, email) {
 }
 function getUserId(email, verNums) {
     db.all("SELECT * FROM users WHERE email LIKE ?", [email], (err, rows) => {
-        saveId(rows[0].userId, verNums, email);
+        sendEmail(rows[0].userId, verNums, email);
         console.log(id);
     })
     return id;
