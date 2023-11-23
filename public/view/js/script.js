@@ -5,12 +5,12 @@ function publishFlight() {
     var departure = document.getElementById('departureTime');
     var arrival = document.getElementById('arrivalTime');
     var price = document.getElementById('flightPrice');
-    window.location = `http://eurojet.ddns.net:3500/addflight/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${adminkey.value}`;
+    window.location = `http://eurojet.ddns.net:3500/flight/add/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${adminkey.value}`;
 }
 function removeFlight() {
     var adminkey = document.getElementById('adminKey');
     var flightId = document.getElementById('flightToRemove'); 
-    window.location = `http://eurojet.ddns.net:3500/removeFlight/${flightId.value}/${adminkey.value}`;
+    window.location = `http://eurojet.ddns.net:3500/flight/remove/${flightId.value}/${adminkey.value}`;
 }
 function editFlight() {
     var adminkey = document.getElementById('adminKey');
@@ -20,20 +20,20 @@ function editFlight() {
     var arrival = document.getElementById('arrivalEditTime');
     var fId = document.getElementById('flightToUpdate');
     var price = document.getElementById('flightEditPrice');
-    window.location = `http://eurojet.ddns.net:3500/efl/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${fId.value}/${adminkey.value}`;
+    window.location = `http://eurojet.ddns.net:3500/flight/edit/${originId.value}/${destinationId.value}/${departure.value}/${arrival.value}/${price.value}/${fId.value}/${adminkey.value}`;
 }
 
 function addDestination() {
     var adminkey = document.getElementById('adminKey');
     var destinationName = document.getElementById('destinationName');
-    window.location = `http://eurojet.ddns.net:3500/addest/${destinationName.value}/${adminkey.value}`;
+    window.location = `http://eurojet.ddns.net:3500/destination/add/${destinationName.value}/${adminkey.value}`;
     console.log("h");
 }
 
 function removeDestination() {
     var adminkey = document.getElementById('adminKey');
     var destinationId = document.getElementById('destinationToRemove');
-    window.location = `http://eurojet.ddns.net:3500/removedestination/${destinationId.value}/${adminkey.value}`;
+    window.location = `http://eurojet.ddns.net:3500/destination/remove/${destinationId.value}/${adminkey.value}`;
 }
 
 function saveKey() {
