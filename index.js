@@ -305,7 +305,7 @@ app.get('/about/get/all/:adminkey', (req, res) => {
     })
 })
 
-app.get('/category/get/:categoryname/:adminkey', (req, res) => {
+app.get('/category/get/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
     db.run("SELECT * FROM ticketCategories", (err, rows) => {
