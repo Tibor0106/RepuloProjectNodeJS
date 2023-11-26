@@ -51,3 +51,23 @@ function openTickets() {
     var adminkey = document.getElementById('adminKey');
     window.location = `http://eurojet.ddns.net:3500/gototickets/${adminkey.value}`;
 }
+
+function openBookings() {
+    var adminkey = document.getElementById('adminkey');
+    window.location = `http://eurojet.ddns.net:3500/bookings/${adminkey.value}`;
+}
+
+function addCar() {
+    var adminkey = document.getElementById('adminKey');
+    var carbrand = document.getElementById('carBrand');
+    var carmodel = document.getElementById('carModel');
+    var carmake = document.getElementById('carMake');
+    var carseats = document.getElementById('carSeats');
+    var carprice = document.getElementById('carPrice');
+    window.location=`http://eurojet.ddns.net:3500/cars/add/${carbrand.value}/${carmodel.value}/${carmake.value}/${carseats.value}/${carprice.value}/${adminkey.value}`;
+}
+function removeCar() {
+    var adminkey = document.getElementById('adminKey');
+    var carid = document.getElementById('carToRemove');
+    window.location=`http://eurojet.ddns.net:3500/cars/remove/${carid.value}/${adminkey.value}`;
+}

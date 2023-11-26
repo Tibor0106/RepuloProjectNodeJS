@@ -32,32 +32,7 @@
         <input type="time" name="departureTime" id="departureTime">
         <input type="time" name="arrivalTime" id="arrivalTime">
         <button onclick="publishFlight();">Publish</button>
-    </div>    
-    <div class="form">
-        <h1 class="texts">Add a destination to the Database</h1>
-        <input type="text" name="destinationName" id="destinationName" placeholder="Destination Name">
-        <button onclick="addDestination();">Add</button>
-    </div>    
-    <div class="form">
-        <h1 class="texts">Remove a flight</h1>
-        <select name="flightToRemove" id="flightToRemove" required>
-            <option value="" disabled selected hidden >flightId..</option>
-            <% for(var i = 0; i < v_flights.length; i++) {%>
-                <option value="<%=v_flights[i]['flightId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_flights[i]['originId']));%> -> <%=f_getDestinationName(parseInt(v_flights[i]['destinationId']));%></option>
-            <% } %>
-        </select>
-        <button onclick="removeFlight();">Remove</button>
-    </div>    
-    <div class="form">
-        <h1 class="texts">Remove a destination from the Database(WILL REMOVE EVERY FLIGHT CONTAINING THIS DESTINATION!)</h1>
-        <select name="destinationToRemove" id="destinationToRemove" required>
-            <option value="" disabled selected hidden >destinationId..</option>
-            <% for(var i = 0; i < v_destinations.length; i++) {%>
-                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_destinations[i]['destinationId']));%></option>
-            <% } %>
-        </select>
-        <button onclick="removeDestination();">Remove</button>
-    </div>   
+    </div>  
     <div class="form">
         <h1 class="texts">Update a flight</h1>
         <select name="flightToUpdate" id="flightToUpdate" required onchange="loadFlightData();">
@@ -85,6 +60,32 @@
         <input type="time" name="arrivalTime" id="arrivalEditTime">
         <button onclick="editFlight();">Update</button>
     </div>    
+    <div class="form">
+        <h1 class="texts">Remove a flight</h1>
+        <select name="flightToRemove" id="flightToRemove" required>
+            <option value="" disabled selected hidden >flightId..</option>
+            <% for(var i = 0; i < v_flights.length; i++) {%>
+                <option value="<%=v_flights[i]['flightId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_flights[i]['originId']));%> -> <%=f_getDestinationName(parseInt(v_flights[i]['destinationId']));%></option>
+            <% } %>
+        </select>
+        <button onclick="removeFlight();">Remove</button>
+    </div>        
+    <div class="form">
+        <h1 class="texts">Add a destination to the Database</h1>
+        <input type="text" name="destinationName" id="destinationName" placeholder="Destination Name">
+        <button onclick="addDestination();">Add</button>
+    </div>  
+    <div class="form">
+        <h1 class="texts">Remove a destination from the Database(WILL REMOVE EVERY FLIGHT CONTAINING THIS DESTINATION!)</h1>
+        <select name="destinationToRemove" id="destinationToRemove" required>
+            <option value="" disabled selected hidden >destinationId..</option>
+            <% for(var i = 0; i < v_destinations.length; i++) {%>
+                <option value="<%=v_destinations[i]['destinationId']%>"><%=i+1%>. <%=f_getDestinationName(parseInt(v_destinations[i]['destinationId']));%></option>
+            <% } %>
+        </select>
+        <button onclick="removeDestination();">Remove</button>
+    </div>   
+    
 
     <script>
         function loadFlightData() {
@@ -109,6 +110,33 @@
             }
         }
     </script>
+
+<div class="form">
+    <h1 class="texts">Add rentable car</h1>
+    <input type="text" name="carBrand" id="carBrand" placeholder="Car Brand">
+    <input type="text" name="carModel" id="carModel" placeholder="Car Model">
+    <input type="number" name="carMake" id="carMake" placeholder="Car Make(YEAR)" min="2005" max="2024" step="1">
+    <input type="number" name="carSeats" id="carSeats" placeholder="Car Seats" min="2" max="9" step="1">
+    <input type="number" name="carPrice" id="carPrice" placeholder="Car Price" min="25000" max="150000" step="1">
+    <button onclick="addCar()">Add Car</button>
+</div>
+
+<div class="form">
+    <h1 class="texts">Remove rentable car</h1>
+    <select name="carToRemove" id="carToRemove" required>
+        <option value="" disabled selected hidden >carId</option>
+        <% for(var i = 0; i < v_cars.length; i++) {
+            var v_jsonified = JSON.parse(v_cars[i]["carInfo"]);
+            %>
+            <option value="<%=v_cars[i]['id']%>"><%=i+1%>. <%=v_jsonified['carmake']%> <%=v_jsonified['carbrand']%> <%= v_jsonified['carmodel']%></option>
+        <% } %>
+    </select>
+    <button onclick="removeCar()">Remove Car</button>
+</div>
+
+    <div class="form" style="margin-top: 1vh">
+        <button onclick="openBookings();">OPEN BOOKINGS</button>
+    </div>
 
     <div class="form" style="margin-top:1vh;">
         <button onclick="openTickets();">GOTO TICKETS</button>

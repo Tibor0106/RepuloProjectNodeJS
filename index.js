@@ -3,6 +3,7 @@ const app = express();
 const sqlite = require("sqlite3").verbose();
 const cors = require('cors');
 const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
 const emailAccount = nodemailer.createTransport({
     service: 'Hotmail',
     auth: {
@@ -11,11 +12,16 @@ const emailAccount = nodemailer.createTransport({
     }
 });
 app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 const port = 3500;
 const adminkey = "admin";
 let destinations;
 let flights;
 let foglalasok;
+let cars;
 let db = new sqlite.Database("db/main.db", (err) => {
     if (err)
         return console.log(err.message);
@@ -36,8 +42,16 @@ function updateFlights() {
         flights = rows;
     });
 }
+function updateCars() {
+    db.all("SELECT * FROM rentcars;", function(err, rows) {
+        if (err)
+            return console.error(err.message);
+        cars = rows;
+    })
+}
 updateDestinations();
 updateFlights();
+updateCars();
 getBookings();
 app.use(express.static('public'));
 app.get('/', (req, res) => {
@@ -54,6 +68,7 @@ app.get('/adminpanel', (req, res) => {
     res.render("../public/adminpanel.ejs", {
         v_flights: flights,
         v_destinations: destinations,
+        v_cars: cars,
         f_getDestinationName: getDestinationName
     });
 })
@@ -362,6 +377,34 @@ app.get('/foglal/:fullName/:email/:phone/:flightId/:adminkey', (req, res) => {
             getBookings();
         });
 });
+
+app.get('/cars/add/:carbrand/:carmodel/:carmake/:carseats/:carprice/:adminkey', (req, res) => {
+
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+
+    var info = {"carbrand": req.params.carbrand, "carmodel": req.params.carmodel, "carmake": req.params.carmake, "carseats": req.params.carseats, "carprice":req.params.carprice};
+    info = JSON.stringify(info);
+    db.run("INSERT INTO rentcars(carInfo) VALUES(?)", [info], (err) => {
+        if (err)
+            return console.error(err.message);
+    })
+    updateCars();
+    return res.redirect("/adminpanel")
+})
+app.get('/cars/remove/:carid/:adminkey', (req, res) => {
+
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+
+    db.run("DELETE FROM rentcars WHERE id=?", [req.params.carid], (err) => {
+        if (err)
+            console.error(err.message);
+    })
+    updateCars();
+    return res.redirect("/adminpanel")
+})
+
 app.listen(port, () => {
     console.log(`EuroJET running on port ${port}! | http://eurojet.ddns.net:${port}`)
 })
