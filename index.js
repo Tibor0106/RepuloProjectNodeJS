@@ -22,6 +22,7 @@ let destinations;
 let flights;
 let foglalasok;
 let cars;
+let kocsifoglalasok;
 let db = new sqlite.Database("db/main.db", (err) => {
     if (err)
         return console.log(err.message);
@@ -53,6 +54,7 @@ updateDestinations();
 updateFlights();
 updateCars();
 getBookings();
+getCarRentals();
 app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.render("../public/index.html", {
@@ -77,7 +79,14 @@ app.get('/foglalasok/:adminkey', (req, res) => {
         return res.end("wrong admin key!");
     res.render("../public/foglalasok.ejs", {
         _foglalasok: foglalasok,
-
+        _des: destinations
+    });
+})
+app.get('/kocsifoglalasok/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    res.render("../public/foglalasok.ejs", {
+        _foglalasok: kocsifoglalasok,
         _des: destinations
     });
 })
@@ -86,7 +95,6 @@ function getTicketOfType(resolved) {
     db.all("SELECT * FROM tickets WHERE resolved = ?", [resolved], (err, rows) => {
         if (err)
             return console.error(err.message);
-        console.log(`clicked: ${rows}`);
         return rows;
     })
 }
@@ -95,6 +103,13 @@ function getBookings() {
         if (err)
             return console.error(err.message);
         foglalasok = rows
+    })
+}
+function getCarRentals() {
+    db.all("SELECT * FROM kocsi_foglalas", (err, rows) => {
+        if (err)
+            return console.error(err.message);
+        kocsifoglalasok = rows;
     })
 }
 
@@ -269,7 +284,6 @@ function sendEmail(v_id, verNums, email) {
 function getUserId(email, verNums) {
     db.all("SELECT * FROM users WHERE email LIKE ?", [email], (err, rows) => {
         sendEmail(rows[0].userId, verNums, email);
-        console.log(id);
     })
     return id;
 }
@@ -322,7 +336,6 @@ app.get('/gototickets/:adminkey', (req, res) => {
 app.get('/about/add/:title/:message/:adminkey', (req, res) => {
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    console.log(req.params.message);
     db.run("INSERT INTO about(title, message) VALUES (?, ?)", [req.params.title, req.params.message], (err) => {
         if (err)
             console.error(err.message);
@@ -377,6 +390,16 @@ app.get('/foglal/:fullName/:email/:phone/:flightId/:adminkey', (req, res) => {
             getBookings();
         });
 });
+app.get('/kocsifoglal/:fullName/:email/:phone/:flightId/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.run("INSERT INTO kocsi_foglalas(flightId, fullName, email, phone) VALUES(?, ?, ?, ?)",
+        [req.params.flightId, req.params.fullName, req.params.email, req.params.phone], (err) => {
+            if (err)
+                return console.error(err);
+            getCarRentals();
+        });
+});
 
 app.get('/cars/add/:carbrand/:carmodel/:carmake/:carseats/:carprice/:adminkey', (req, res) => {
 
@@ -403,6 +426,10 @@ app.get('/cars/remove/:carid/:adminkey', (req, res) => {
     })
     updateCars();
     return res.redirect("/adminpanel")
+})
+app.get('/cars/get', (req, res) => {
+
+    return res.json(cars);
 })
 
 app.listen(port, () => {
