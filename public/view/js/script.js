@@ -1,6 +1,6 @@
 function publishFlight() {
     var adminkey = document.getElementById('adminKey');
-    var originId = document.getElementById('flightOrigin'); 
+    var originId = document.getElementById('flightOrigin');
     var destinationId = document.getElementById('flightDestination');
     var departure = document.getElementById('departureTime');
     var arrival = document.getElementById('arrivalTime');
@@ -9,12 +9,12 @@ function publishFlight() {
 }
 function removeFlight() {
     var adminkey = document.getElementById('adminKey');
-    var flightId = document.getElementById('flightToRemove'); 
+    var flightId = document.getElementById('flightToRemove');
     window.location = `http://eurojet.ddns.net:3500/flight/remove/${flightId.value}/${adminkey.value}`;
 }
 function editFlight() {
     var adminkey = document.getElementById('adminKey');
-    var originId = document.getElementById('flightEditOrigin'); 
+    var originId = document.getElementById('flightEditOrigin');
     var destinationId = document.getElementById('flightEditDestination');
     var departure = document.getElementById('departureEditTime');
     var arrival = document.getElementById('arrivalEditTime');
@@ -38,12 +38,12 @@ function removeDestination() {
 
 function saveKey() {
     var adminkey = document.getElementById('adminKey');
-    document.cookie=`adminkey=${adminkey.value}`;
+    document.cookie = `adminkey=${adminkey.value}`;
 }
 
 function setAdminKey() {
     if (document.cookie.includes('adminkey'))
-        document.getElementById('adminKey').value=document.cookie.split('=')[1];
+        document.getElementById('adminKey').value = document.cookie.split('=')[1];
 
 }
 

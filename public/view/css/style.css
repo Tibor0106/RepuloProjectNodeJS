@@ -1,8 +1,15 @@
-#flightOrigin:invalid, #flightDestination:invalid, #flightToRemove:invalid, #destinationToRemove:invalid {
-    color:gray;
+#flightOrigin:invalid,
+#flightDestination:invalid,
+#flightToRemove:invalid,
+#destinationToRemove:invalid {
+    color: gray;
 }
-#flightOrigin:valid, #flightDestination:valid, #flightToRemove:valid, #destinationToRemove:valid {
-    color:black;
+
+#flightOrigin:valid,
+#flightDestination:valid,
+#flightToRemove:valid,
+#destinationToRemove:valid {
+    color: black;
 }
 
 .adminkeypanel {
@@ -11,51 +18,63 @@
     flex-flow: column;
     text-align: center;
 }
-.adminkeypanel button{
-    border:none;
+
+.adminkeypanel button {
+    border: none;
     background-color: #dbdbdb;
     border-radius: 50px;
-    height:5vh;
+    height: 5vh;
 }
-.adminkeypanel button:hover{
+
+.adminkeypanel button:hover {
     background-color: #cecece;
-    cursor:pointer;
+    cursor: pointer;
     box-shadow: 2px 2px rgb(125, 125, 125);
 }
+
 .adminkeypanel p {
-    margin-top:-.3vh;
+    margin-top: -.3vh;
 }
+
 .form {
-    width:98vw;
-    display:flex;
-    flex-flow:column;
+    width: 98vw;
+    display: flex;
+    flex-flow: column;
     align-items: center;
     text-align: center;
 }
-.form input[type=text], .form input[type=time], .form select {
-    width:25%;
-    border-radius: 500px;
-    border:none;
-    background-color: #eaeaea;
-    margin:5px;
-    box-shadow:2px 2px rgb(125, 125, 125, 0.5);
-}
+
+.form input[type=text],
+.form input[type=time],
 .form select {
-    height:4vh;
+    width: 25%;
+    border-radius: 500px;
+    border: none;
+    background-color: #eaeaea;
+    margin: 5px;
+    box-shadow: 2px 2px rgb(125, 125, 125, 0.5);
 }
+
+.form select {
+    height: 4vh;
+}
+
 .form input[type=time] {
-    width:6%;
+    width: 6%;
 }
+
 .form input[type=number] {
-    height:4vh;
-    width:23vw;
-    outline:none;
+    height: 4vh;
+    width: 23vw;
+    outline: none;
 }
+
 .priceDiv {
     display: flex;
     align-items: center;
     min-width: 0;
 }
+
 .priceDiv input {
     font-family: inherit;
     font-size: inherit;
@@ -63,40 +82,63 @@
     text-align: right;
     flex: 1;
     min-width: 0;
-  
+
     border: none;
     background: none;
-  }
+}
+
 .priceDiv::after {
     content: "Ft";
 }
 
 .form button {
-    border:none;
-    border-radius:500px;
-    width:15vw;
-    height:4vh;
-    font-size:1.3vw;
+    border: none;
+    border-radius: 500px;
+    width: 15vw;
+    height: 4vh;
+    font-size: 1.3vw;
 }
+
 .form button:hover {
     background-color: #dadada;
     box-shadow: 2px 2px #c7c7c7;
 }
+
 .form button:active {
     background-color: #c7c7c7;
     box-shadow: 2px 2px #bababa;
 }
-h1.texts, p {
+
+h1.texts,
+p {
     text-shadow: 2px 2px rgb(200, 200, 200, 0.5);
 }
-h2, h3, h4, h5, h6, input, button, option, select, h1, p {
-    font-family:monospace
+
+h2,
+h3,
+h4,
+h5,
+h6,
+input,
+button,
+option,
+select,
+h1,
+p {
+    font-family: monospace
 }
+
 .form {
-    padding-bottom:2vh;
+    padding-bottom: 2vh;
     border-bottom: 2px solid rgb(122, 122, 122, 0.25);
 }
 
 option {
-    color:black;
+    color: black;
+}
+
+.honnanhova {
+    text-align: center;
+    margin-top: 3vh;
+    padding: 10px;
 }

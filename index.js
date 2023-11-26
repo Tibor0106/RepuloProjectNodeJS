@@ -15,6 +15,7 @@ const port = 3500;
 const adminkey = "admin";
 let destinations;
 let flights;
+let foglalasok;
 let db = new sqlite.Database("db/main.db", (err) => {
     if (err)
         return console.log(err.message);
@@ -27,6 +28,7 @@ function updateDestinations() {
         destinations = rows;
     });
 }
+
 function updateFlights() {
     db.all("SELECT * FROM flights;", function (err, rows) {
         if (err)
@@ -36,6 +38,7 @@ function updateFlights() {
 }
 updateDestinations();
 updateFlights();
+getBookings();
 app.use(express.static('public'));
 app.get('/', (req, res) => {
     res.render("../public/index.html", {
@@ -54,6 +57,15 @@ app.get('/adminpanel', (req, res) => {
         f_getDestinationName: getDestinationName
     });
 })
+app.get('/foglalasok/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    res.render("../public/foglalasok.ejs", {
+        _foglalasok: foglalasok,
+
+        _des: destinations
+    });
+})
 
 function getTicketOfType(resolved) {
     db.all("SELECT * FROM tickets WHERE resolved = ?", [resolved], (err, rows) => {
@@ -61,6 +73,13 @@ function getTicketOfType(resolved) {
             return console.error(err.message);
         console.log(`clicked: ${rows}`);
         return rows;
+    })
+}
+function getBookings() {
+    db.all("SELECT * FROM jarat_foglalas INNER JOIN flights ON jarat_foglalas.flightId = flights.flightId INNER JOIN destinations ON destinations.destinationId = flights.destinationId", (err, rows) => {
+        if (err)
+            return console.error(err.message);
+        foglalasok = rows
     })
 }
 
@@ -203,20 +222,20 @@ const userExists = (email, username, password) => {
     db.all("SELECT * FROM users WHERE email LIKE ? AND username LIKE ?", [email, username], (err, rows) => {
         if (err)
             console.error(err.message);
-        if (rows.length == 0){
+        if (rows.length == 0) {
             var verNums = generateVerificationNumber()
-        db.run("INSERT INTO users(userName, email, userPassword, verified, verificationNumbers) VALUES(?,?,?,?,?)", [username, email, password, false, verNums], (err) => {
-            if (err)
-                return console.error(err.message);
-            getUserId(email, verNums);
-            return {'registered': true};
-        });
+            db.run("INSERT INTO users(userName, email, userPassword, verified, verificationNumbers) VALUES(?,?,?,?,?)", [username, email, password, false, verNums], (err) => {
+                if (err)
+                    return console.error(err.message);
+                getUserId(email, verNums);
+                return { 'registered': true };
+            });
         }
         else {
-            return {'registered': false, 'error': 'exists'};
+            return { 'registered': false, 'error': 'exists' };
         }
     })
-    return {'registered': false, 'error': 'noval'};
+    return { 'registered': false, 'error': 'noval' };
 }
 var id = 0;
 function sendEmail(v_id, verNums, email) {
@@ -243,11 +262,11 @@ app.get('/register/:email/:username/:password/:adminkey', (req, res) => {
 
     if (req.params.adminkey != adminkey)
         return res.end("wrong admin key!");
-    
+
     //if (userExists(req.params.email, req.params.username) == true)
     //return res.json({"registered": false, "error": "exists"})         TODO: FIX <--- 
     //else{
-    
+
     return res.json(userExists(req.params.email, req.params.username, req.params.password))
     //}
 })
@@ -259,9 +278,9 @@ app.get('/login/:email/:password/', (req, res) => {
         if (err)
             console.error(err.message);
         if (rows.length > 0)
-            return res.json({'success':true, 'logindata':`email=${rows[0].email}&username=${rows[0].userName}`});
+            return res.json({ 'success': true, 'logindata': `email=${rows[0].email}&username=${rows[0].userName}` });
         else
-            return res.json({'success':false});
+            return res.json({ 'success': false });
     })
 })
 
@@ -320,7 +339,7 @@ app.get('/category/add/:categoryname/:adminkey', (req, res) => {
     db.run("INSERT INTO ticketCategories(categoryName) VALUES (?)", [req.params.categoryname], (err) => {
         if (err)
             return console.error(err.message);
-        return res.json({"success": true});
+        return res.json({ "success": true });
     })
 })
 
@@ -330,11 +349,19 @@ app.get('/category/remove/:categoryid/:adminkey', (req, res) => {
     db.run("DELETE FROM ticketCategories WHERE categoryId = ?", [req.params.categoryid], (err) => {
         if (err)
             return console.error(err.message);
-        return res.json({"success": true});
+        return res.json({ "success": true });
     })
 })
-
-
+app.get('/foglal/:fullName/:email/:phone/:flightId/:adminkey', (req, res) => {
+    if (req.params.adminkey != adminkey)
+        return res.end("wrong admin key!");
+    db.run("INSERT INTO jarat_foglalas(flightId, fullName, email, phone) VALUES(?, ?, ?, ?)",
+        [req.params.flightId, req.params.fullName, req.params.email, req.params.phone], (err) => {
+            if (err)
+                return console.error(err);
+            getBookings();
+        });
+});
 app.listen(port, () => {
     console.log(`EuroJET running on port ${port}! | http://eurojet.ddns.net:${port}`)
 })
